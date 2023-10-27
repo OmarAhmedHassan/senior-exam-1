@@ -1,3 +1,78 @@
+<?php 
+session_start();
+
+/*
+array(0) {
+}
+
+array(5) {
+  ["uname"]=>
+  string(7) "xerijyc"
+  ["upw"]=>
+  string(9) "Pa$$w0rd!"
+  ["email"]=>
+  string(24) "jemubehos@mailinator.com"
+  ["u_type"]=>
+  string(5) "admin"
+  ["img_name"]=>
+  string(45) "653bf2d8ede6fScreenshot 2023-07-05 232002.png"
+}
+
+
+Warning: Undefined variable $flag in F:\xam
+
+
+
+echo "<pre>";
+var_dump($_POST);
+echo "</pre>";
+
+echo "<pre>";
+var_dump($_SESSION);
+echo "</pre>";
+*/
+$all_errors = [];
+$flag = 0 ;
+
+if(isset($_POST["uname_email"])){
+    $un =$_SESSION["uname"];
+    $pw =$_SESSION["upw"];
+    $em = $_SESSION["email"];
+    $u_type  =$_SESSION["u_type"];
+
+    $f_in=$_POST["uname_email"];
+
+    if($f_in == $un or $f_in == $em){
+        $flag ++;
+        if($_POST["upw"] == $pw ){
+            $flag ++;
+
+        }else{ $all_errors['f_1'] = 'Wrong password';}
+    }else{ $all_errors['f_2'] = 'Wrong username or email';}
+
+
+
+
+
+
+
+
+};
+
+
+
+
+if($flag == 2) {
+
+if($u_type =="user"){header('location:front/');};
+if($u_type =="admin"){header('location:dashboard/');};
+
+}
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -152,18 +227,24 @@
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form>
+    <form method='post'>
         <h3>Login Here</h3>
+<?php if(! empty($all_errors)) : ?>
+  <?php foreach($all_errors as $error) : ?>
+    <div class="alert alert-info"><?= $error ?></div>
+  <?php endforeach ?>
+<?php endif ?>
 
         <label for="username">Username Or Email</label>
-        <input type="text" placeholder="Email or Username" id="username">
+        <input type="text" placeholder="Email or Username" id="username"  name="uname_email">
 
         <label for="password">Password</label>
-        <input type="password" placeholder="Password" id="password">
+        <input type="password" placeholder="Password" id="password" name="upw">
 
         <button>Log In</button>
-        <div class="social">
+        <div class="social"><a href="register.php">
             <div class="go"><i class="fab fa-google"></i> Register </div>
+            </a>
         </div>
     </form>
 </body>

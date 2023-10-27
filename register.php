@@ -174,9 +174,8 @@ if(empty($all_errors) && $flag == 5) {
     $_SESSION["email"] = $em;
     $_SESSION["u_type"] = $u_type;
     $_SESSION["img_name"] = $img_name;
+    header('location:login.php');
 
-if($u_type =="user"){header('location:front/');};
-if($u_type =="admin"){header('location:dashboard/');};
 }
 
 ?>
