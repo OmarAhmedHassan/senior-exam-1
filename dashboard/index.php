@@ -1,10 +1,17 @@
 <?php 
 
 
+session_start();
 
+/*
+echo "<pre>";
+var_dump($_SESSION);
+echo "</pre>";
+*/
 //$login=false;
-$login=0;
-
+if (isset($_SESSION["email"])) {
+$login=1;
+} else {$login=0;}
 
 
 
@@ -12,11 +19,16 @@ if(!$login){
     header("location:../front");
 
 };
+
+
+$img_name = $_SESSION["img_name"];
+
+
+if($_SESSION["u_type"] =="user"){header('location:../front/');};
 ?>
 
-<?php if($login) :?>
-                            <img src="assets/img/banner/banner_img.png" alt="">
-                        <?php endif;?>
+
+
 <!doctype html>
 <html lang="en">
 
@@ -61,7 +73,7 @@ if(!$login){
                     <div class="d-flex">
                         <!-- LOGO -->
                         <div class="navbar-brand-box">
-                            <a href="index.html" class="logo logo-dark">
+                            <a href="index.php" class="logo logo-dark">
                                 <span class="logo-sm">
                                     <img src="assets/images/logo-sm.png" alt="logo-sm" height="22">
                                 </span>
@@ -70,7 +82,7 @@ if(!$login){
                                 </span>
                             </a>
 
-                            <a href="index.html" class="logo logo-light">
+                            <a href="index.php" class="logo logo-light">
                                 <span class="logo-sm">
                                     <img src="assets/images/logo-sm.png" alt="logo-sm-light" height="22">
                                 </span>
@@ -426,7 +438,8 @@ if(!$login){
                         <div class="dropdown d-inline-block user-dropdown">
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg"
+                                <img class="rounded-circle header-profile-user" 
+                                src="../uploads/profile/<?= $img_name ?>"
                                     alt="Header Avatar">
                                 <span class="d-none d-xl-inline-block ms-1">Julia</span>
                                 <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
@@ -438,7 +451,7 @@ if(!$login){
                                 <a class="dropdown-item d-block" href="#"><span class="badge bg-success float-end mt-1">11</span><i class="ri-settings-2-line align-middle me-1"></i> Settings</a>
                                 <a class="dropdown-item" href="#"><i class="ri-lock-unlock-line align-middle me-1"></i> Lock screen</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger" href="#"><i class="ri-shut-down-line align-middle me-1 text-danger"></i> Logout</a>
+                                <a class="dropdown-item text-danger" href="../logout.php"><i class="ri-shut-down-line align-middle me-1 text-danger"></i> Logout</a>
                             </div>
                         </div>
 
@@ -461,9 +474,8 @@ if(!$login){
                     <div class="user-profile text-center mt-3">
                         <div class="">
                         <?php if($login) :?>
-                            <img  class="avatar-md rounded-circle" src="uploads/profile/por.jpg" alt="">
+                            <img  class="avatar-md rounded-circle" src="../uploads/profile/<?= $img_name ?>" alt="">
                         <?php endif;?>
-                            <img src="assets/images/users/avatar-1.jpg" alt="" class="avatar-md rounded-circle">
                         </div>
                         <div class="mt-3">
                             <h4 class="font-size-16 mb-1">Julia Hudda</h4>
@@ -478,9 +490,9 @@ if(!$login){
                             <li class="menu-title">Menu</li>
 
                             <li>
-                                <a href="index.html" class="waves-effect">
+                                <a href="index.php" class="waves-effect">
                                     <i class="ri-dashboard-line"></i><span class="badge rounded-pill bg-success float-end">3</span>
-                                    <span>Dashboard</span>
+                                    <span>Dashboard </span>
                                 </a>
                             </li>
 

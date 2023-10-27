@@ -1,3 +1,188 @@
+<?php
+/*
+array(5) { ["uname"]=> string(7) "bexebud" 
+    ["email"]=> string(24) "lazokebow@mailinator.com" 
+    ["u_type"]=> string(5) "admin" 
+    ["upw"]=> string(9) "Pa$$w0rd!" 
+    ["co-upw"]=> string(9) "Pa$$w0rd!" } 
+    array(1) { ["my_image"]=> array(6) { ["name"]=> string(11) "PPOFine.png" ["full_path"]=> string(11) "PPOFine.
+*/
+
+
+//var_dump($_GET);
+//var_dump($_POST);
+echo "<pre>";
+var_dump($_FILES);
+echo "</pre>";
+//var_dump($_SERVER);
+
+
+$all_errors = [];
+
+
+
+
+if(isset($_POST['email']) && isset($_POST['uname']) && isset($_POST['upw'])) {
+    $flag = 0 ;
+   // echo 'hi';
+
+    $un = $_POST['uname'];
+    $pw = $_POST['upw'];
+    $co_pw = $_POST['co-upw'];
+    $em = $_POST['email'];
+    $u_type= $_POST['u_type'];
+
+    if(!empty($u_type)){
+        if($u_type == 'user' or $u_type == 'admin'){
+            $flag++;// 1
+            
+        }else{  
+            $all_errors['u_type'] = 'Must Check on Role cannot be empty.';
+
+        }
+    }
+
+
+
+    // $all_errors['a'] = 'ahmed';
+    // echo $un , $pw , $em , $msg ;
+
+    // echo $_POST['uname'] , $_POST['upw'] , $_POST['email'] ,$_POST['msg'];
+    if(!empty($un)) {
+        if(strlen($un) >= 5 AND strlen($un) <= 20) {
+            if(preg_match('/^[a-zA-Z0-9_]+$/', $un)) {
+                // $flag++;
+                // echo "un corrct";
+                $flag++;// 2
+
+            } else {
+                $all_errors['un_senior'] = 'Username can only contain letters, numbers, and underscores.';
+            }
+        } else {
+            $all_errors['un_length'] = 'Username must be between 5 and 20 characters long.';
+        }
+    } else {
+        $all_errors['un_empty'] = 'Username cannot be empty.';
+    }
+
+
+    if(!empty($em)) {
+            if(filter_var($em, FILTER_VALIDATE_EMAIL)) {
+                // $flag++;
+                // echo "un corrct";
+                $flag++;// 3
+
+            } else {
+                $all_errors['email_Invalid'] = 'Invalid email format.';
+            
+        }
+    } else {
+        $all_errors['email_empty'] = 'Email cannot be empty.';
+    }
+
+
+
+
+    if(!empty($pw)) {
+        if(strlen($pw) >= 8) {
+            if(preg_match('@[A-Z][a-z]@', $pw)) {
+                if($pw == $co_pw){
+
+                
+                    $flag++ ; //4
+                } else {
+                    $all_errors['pw_match'] = 'Passwords do not match.';
+                }
+            } else {
+                $all_errors['pw_alpha'] = 'Password can only contain letters, numbers, and underscores.';
+            }
+        } else {
+            $all_errors['pw_length'] = 'Password must be at least 8 characters long.';
+        }
+    } else {
+        $all_errors['pw_empty'] = 'Password cannot be empty.';
+    }
+
+    // if(!empty($un) && strlen($un) >= 8) {
+
+    //     echo "great";
+
+    // } else {
+    //     echo 'plz enter username ';
+    // }
+
+
+
+}
+
+
+
+$img_name="empty";
+
+//$all_errors = [];
+
+$allowed_ext = ['png' , 'jpg' , 'jpeg'];
+
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if(isset($_FILES['my_image'])) {
+        if($_FILES['my_image']['error'] != 4) {
+            ///echo "dsfgsdgsdgsdgsdg";
+
+
+            // $img_name =  $_FILES['my_image']['name'];
+            // $img_tmp =  $_FILES['my_image']['tmp_name'];
+            // $img_size =  $_FILES['my_image']['size'];
+
+            $my_img = $_FILES['my_image'];// 6 attr
+            $img_name = uniqid() . $my_img['name']; 
+            $img_tmp = $my_img['tmp_name'];
+            $img_size = $my_img['size'] ;
+
+            $img_ext = explode('.', $img_name);
+            $img_f_ext = end($img_ext);// jpg
+            $ext = strtolower($img_f_ext);
+     
+            if($img_size < 2097152) {
+
+
+                    if(in_array($ext, $allowed_ext)) {
+
+                        move_uploaded_file($img_tmp, 'uploads/profile/' . $img_name);
+                        $flag++;
+                    } else {
+                        $all_errors['f_ext'] = 'Invalid image type. Only JPEG, PNG, and JPG are allowed.';
+                    }
+
+            } else {
+                $all_errors['f_size'] = 'Image is too large. Maximum size is 1.5 megabytes.';
+            }
+
+
+        } else {
+            $all_errors['f_exist'] = 'Error uploading image.';
+        }
+    }
+}
+
+//echo $flag;
+
+
+if(empty($all_errors) && $flag == 5) {
+    session_start();
+    $_SESSION["uname"] = $un;
+    $_SESSION["upw"] = $pw;
+    $_SESSION["email"] = $em;
+    $_SESSION["u_type"] = $u_type;
+    $_SESSION["img_name"] = $img_name;
+
+if($u_type =="user"){header('location:front/');};
+if($u_type =="admin"){header('location:dashboard/');};
+}
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -164,14 +349,23 @@
 </head>
 
 <body>
+
+
+
+
     <div class="background">
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form>
+    <form method="post" enctype="multipart/form-data">
         <h3>Register Here</h3>
-
-        <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+<?php if(! empty($all_errors)) : ?>
+  <?php foreach($all_errors as $error) : ?>
+    <div class="alert alert-info"><?= $error ?></div>
+  <?php endforeach ?>
+<?php endif ?>
+<!--
+<svg xmlns="http://www.w3.org/2000/svg" class="d-none">
             <symbol id="check-circle-fill" viewBox="0 0 16 16">
                 <path
                     d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
@@ -185,33 +379,39 @@
                     d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
             </symbol>
         </svg>
-
+  -->
         <label for="username">Username</label>
-        <input type="text" placeholder="username" id="username">
+        <input type="text" placeholder="username" id="username" name="uname" required>
 
 
         <label for="email">Email</label>
-        <input type="text" placeholder="email" id="email">
+        <input type="text" placeholder="email" id="email" name="email" required>
 
 
         <label for="img">Profile Image</label>
-        <input type="file" id="img">
+        <input type="file" id="img" name="my_image" required>
 
 
         <label for="username">User Type</label>
-        <input type="radio"><span class="spn-radio">Admin</span>
-        <input type="radio"><span class="spn-radio">User</span>
+
+
+        <input type="radio" name="u_type" value="admin" required>
+            <span class="spn-radio">Admin</span>
+
+
+        <input type="radio" name="u_type"  value="user" required checked>
+            <span class="spn-radio">User</span>
 
 
         <label for="password">Password</label>
-        <input type="password" placeholder="Password" id="password">
+        <input type="password" placeholder="Password" id="password"  name="upw" required>
 
 
         <label for="co-password">confirm Password</label>
-        <input type="password" placeholder="Confirm Password" id="co-password">
+        <input type="password" placeholder="Confirm Password" id="co-password"  name="co-upw" required>
 
 
-        <button>Log In</button>
+        <button type="submit">Log In</button>
         <div class="social">
             <div class="go"><i class="fab fa-google"></i> login </div>
         </div>

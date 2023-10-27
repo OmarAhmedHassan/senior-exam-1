@@ -1,9 +1,20 @@
 <?php 
+session_start();
 
 
+//var_dump($_SESSION);
+
+
+if(isset($_SESSION["email"])){
+
+    $img_name = $_SESSION["img_name"];
+    $login=1;
+
+} else {$login=0;}
+    
 
 //$login=false;
-$login=0;
+
 ?>
 
 <!doctype html>
@@ -54,14 +65,14 @@ $login=0;
                         <div class="menu__wrap">
                             <nav class="menu__nav">
                                 <div class="logo">
-                                    <a href="index.html" class="logo__black"><img src="assets/img/logo/logo_black.png"
+                                    <a href="index.php" class="logo__black"><img src="assets/img/logo/logo_black.png"
                                             alt=""></a>
-                                    <a href="index.html" class="logo__white"><img src="assets/img/logo/logo_white.png"
+                                    <a href="index.php" class="logo__white"><img src="assets/img/logo/logo_white.png"
                                             alt=""></a>
                                 </div>
                                 <div class="navbar__wrap main__menu d-none d-xl-flex">
                                     <ul class="navigation">
-                                        <li class="active"><a href="index.html">Home</a></li>
+                                        <li class="active"><a href="index.php">Home</a></li>
                                         <li><a href="about.html">About</a></li>
                                         <li><a href="services-details.html">Services</a></li>
                                         <li class="menu-item-has-children"><a href="#">Portfolio</a>
@@ -81,11 +92,11 @@ $login=0;
                                 </div>      
                                 <div class="header__btn d-none d-md-block">
                                     <?php if(!$login) :?>
-                                    <a href="" class="btn">Login</a>
-                                    <a href="" class="btn">Register</a>
+                                    <a href="../login.php" class="btn">Login</a>
+                                    <a href="../register.php" class="btn">Register</a>
                                     <?php endif;?>
                                     <?php if($login) :?>
-                                        <a href="" class="btn">Logout</a>
+                                        <a href="../logout.php" class="btn">Logout</a>
                                     <?php endif;?>
 
                                     
@@ -97,9 +108,9 @@ $login=0;
                             <nav class="menu__box">
                                 <div class="close__btn"><i class="fal fa-times"></i></div>
                                 <div class="nav-logo">
-                                    <a href="index.html" class="logo__black"><img src="assets/img/logo/logo_black.png"
+                                    <a href="index.php" class="logo__black"><img src="assets/img/logo/logo_black.png"
                                             alt=""></a>
-                                    <a href="index.html" class="logo__white"><img src="assets/img/logo/logo_white.png"
+                                    <a href="index.php" class="logo__white"><img src="assets/img/logo/logo_white.png"
                                             alt=""></a>
                                 </div>
                                 <div class="menu__outer">
@@ -135,6 +146,9 @@ $login=0;
                     <div class="col-lg-6 order-0 order-lg-2">
                         <div class="banner__img text-center text-xxl-end">
                         <?php if($login) :?>
+                            <img src="../uploads/profile/<?= $img_name ?>" alt="">
+                        <?php endif;?>
+                        <?php if(!$login) :?>
                             <img src="assets/img/banner/banner_img.png" alt="">
                         <?php endif;?>
 
